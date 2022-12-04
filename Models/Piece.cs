@@ -20,6 +20,6 @@ namespace CMRWebApi.Models
         public IEnumerable<AudioRecording> AudioRecordings { get; set; }
         public IEnumerable<VideoRecording> VideoRecordings { get; set; }
         public IEnumerable<SheetMusic> SheetMusic { get; set; }
-        //public IEnumerable<Instrument> Instruments { get; set; }
+        public IEnumerable<InstrumentPiece> InstrumentPieces { get; set; }
     }
 }
