@@ -8,10 +8,6 @@ namespace CMRWebApi.Models
         [Required]
         public string Name { get; set; }
 
-        //[Required]
-        //public Guid PieceId { get; set; }
-        //public Piece Piece { get; set; }
-
-        public IEnumerable<Piece> Pieces { get; set; }
+        public IEnumerable<InstrumentPiece> InstrumentPieces { get; set; }
     }
 }

@@ -25,7 +25,14 @@ namespace CMRWebApi.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetPiece(Guid id)
         {
-            Piece piece = await _context.Pieces.FindAsync(id);
+            Piece piece = await _context.Pieces
+                .Include(p => p.SheetMusic)
+                .Include(p => p.AudioRecordings)
+                .Include(p => p.VideoRecordings)
+                .Include(p => p.Composer)
+                .Include(p => p.Tonality)
+                .Include(p => p.InstrumentPieces)
+                .FirstAsync(p => p.Id == id);
 
             if (piece == null) return NotFound();
 

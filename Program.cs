@@ -9,11 +9,12 @@ builder.Services.AddDbContext<CMRDbContext>(options =>
     options.UseMySql(builder.Configuration["ConnectionStrings:DbConnection"], new MySqlServerVersion(new Version()));
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
-builder.Services.Configure<JsonOptions>(options =>
+builder.Services.Configure<MvcNewtonsoftJsonOptions>(options =>
 {
-    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 
 var app = builder.Build();

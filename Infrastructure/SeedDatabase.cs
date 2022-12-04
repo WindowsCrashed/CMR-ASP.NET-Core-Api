@@ -11,10 +11,11 @@ namespace CMRWebApi.Infrastructure
 
             if (!context.Composers.Any() && !context.Pieces.Any()
                 && !context.AudioRecordings.Any() && !context.VideoRecordings.Any()
-                && !context.SheetMusic.Any() && !context.Tonality.Any())
-            //&& !context.Instruments.Any())
+                && !context.SheetMusic.Any() && !context.Tonality.Any()
+                && !context.Instruments.Any() && !context.InstrumentPieces.Any())
             {
-                Composer bach = new() {
+                Composer bach = new()
+                {
                     Id = Guid.NewGuid(),
                     Name = "Johann Sebastian",
                     LastName = "Bach",
@@ -164,7 +165,7 @@ namespace CMRWebApi.Infrastructure
                 context.AddRange(
                     new AudioRecording()
                     {
-                        Id= Guid.NewGuid(),
+                        Id = Guid.NewGuid(),
                         AudioPath = "6384f2790c141.mp3",
                         ImagePath = "6384f20abfb51.jpg",
                         Performers = "ingrid haebler",
@@ -305,6 +306,57 @@ namespace CMRWebApi.Infrastructure
                         Id = Guid.NewGuid(),
                         Url = "https://vmirror.imslp.org/files/imglnks/usimg/f/f0/IMSLP00511-Debussy_-_Suite_Bergamasque_-_1_-_Prelude.pdf",
                         Piece = prelude
+                    }
+                );
+
+                Instrument keyboard = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Keyboard"
+                };
+
+                Instrument orch = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Orchestra"
+                };
+
+                Instrument piano = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Piano"
+                };
+
+                context.AddRange(
+                    new InstrumentPiece()
+                    {
+                        Instrument = keyboard,
+                        Piece = frenchSuite
+                    },
+                    new InstrumentPiece()
+                    {
+                        Instrument = keyboard,
+                        Piece = kbPartita
+                    },
+                    new InstrumentPiece()
+                    {
+                        Instrument = orch,
+                        Piece = symph
+                    },
+                    new InstrumentPiece()
+                    {
+                        Instrument = piano,
+                        Piece = prelude
+                    },
+                    new InstrumentPiece()
+                    {
+                        Instrument = piano,
+                        Piece = appassionata
+                    },
+                    new InstrumentPiece()
+                    {
+                        Instrument = piano,
+                        Piece = ballade
                     }
                 );
 

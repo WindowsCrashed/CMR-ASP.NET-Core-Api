@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CMRWebApi.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -37,6 +37,20 @@ namespace CMRWebApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Composers", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Instruments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Instruments", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -115,6 +129,31 @@ namespace CMRWebApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "InstrumentPieces",
+                columns: table => new
+                {
+                    InstrumentId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    PieceId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InstrumentPieces", x => new { x.InstrumentId, x.PieceId });
+                    table.ForeignKey(
+                        name: "FK_InstrumentPieces_Instruments_InstrumentId",
+                        column: x => x.InstrumentId,
+                        principalTable: "Instruments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InstrumentPieces_Pieces_PieceId",
+                        column: x => x.PieceId,
+                        principalTable: "Pieces",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "SheetMusic",
                 columns: table => new
                 {
@@ -166,6 +205,11 @@ namespace CMRWebApi.Migrations
                 column: "PieceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InstrumentPieces_PieceId",
+                table: "InstrumentPieces",
+                column: "PieceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Pieces_ComposerId",
                 table: "Pieces",
                 column: "ComposerId");
@@ -192,10 +236,16 @@ namespace CMRWebApi.Migrations
                 name: "AudioRecordings");
 
             migrationBuilder.DropTable(
+                name: "InstrumentPieces");
+
+            migrationBuilder.DropTable(
                 name: "SheetMusic");
 
             migrationBuilder.DropTable(
                 name: "VideoRecordings");
+
+            migrationBuilder.DropTable(
+                name: "Instruments");
 
             migrationBuilder.DropTable(
                 name: "Pieces");

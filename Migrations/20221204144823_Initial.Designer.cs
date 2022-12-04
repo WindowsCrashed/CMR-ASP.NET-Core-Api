@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CMRWebApi.Migrations
 {
     [DbContext(typeof(CMRDbContext))]
-    [Migration("20221204015350_initial")]
-    partial class initial
+    [Migration("20221204144823_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,6 +86,36 @@ namespace CMRWebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Composers");
+                });
+
+            modelBuilder.Entity("CMRWebApi.Models.Instrument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Instruments");
+                });
+
+            modelBuilder.Entity("CMRWebApi.Models.InstrumentPiece", b =>
+                {
+                    b.Property<Guid>("InstrumentId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("PieceId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("InstrumentId", "PieceId");
+
+                    b.HasIndex("PieceId");
+
+                    b.ToTable("InstrumentPieces");
                 });
 
             modelBuilder.Entity("CMRWebApi.Models.Piece", b =>
@@ -194,6 +224,25 @@ namespace CMRWebApi.Migrations
                     b.Navigation("Piece");
                 });
 
+            modelBuilder.Entity("CMRWebApi.Models.InstrumentPiece", b =>
+                {
+                    b.HasOne("CMRWebApi.Models.Instrument", "Instrument")
+                        .WithMany("InstrumentPieces")
+                        .HasForeignKey("InstrumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CMRWebApi.Models.Piece", "Piece")
+                        .WithMany("InstrumentPieces")
+                        .HasForeignKey("PieceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Instrument");
+
+                    b.Navigation("Piece");
+                });
+
             modelBuilder.Entity("CMRWebApi.Models.Piece", b =>
                 {
                     b.HasOne("CMRWebApi.Models.Composer", "Composer")
@@ -235,9 +284,16 @@ namespace CMRWebApi.Migrations
                     b.Navigation("Piece");
                 });
 
+            modelBuilder.Entity("CMRWebApi.Models.Instrument", b =>
+                {
+                    b.Navigation("InstrumentPieces");
+                });
+
             modelBuilder.Entity("CMRWebApi.Models.Piece", b =>
                 {
                     b.Navigation("AudioRecordings");
+
+                    b.Navigation("InstrumentPieces");
 
                     b.Navigation("SheetMusic");
 
