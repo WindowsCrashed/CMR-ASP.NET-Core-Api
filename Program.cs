@@ -17,6 +17,15 @@ builder.Services.Configure<MvcNewtonsoftJsonOptions>(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "_allowSpecificOrigins",
+                      policy =>
+                      {
+                        policy.WithOrigins("http://localhost:3000");
+                      });
+});
+
 var app = builder.Build();
 
 app.MapControllers();
@@ -25,5 +34,7 @@ var context = app.Services.CreateScope().ServiceProvider.GetService<CMRDbContext
 SeedDatabase.Seed(context);
 
 app.UseHttpsRedirection();
+app.UseCors("_allowSpecificOrigins");
+app.UseStaticFiles();
 
 app.Run();
