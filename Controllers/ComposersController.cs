@@ -21,7 +21,10 @@ namespace CMRWebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetComposers()
         {
-            var composers = await _context.Composers.ToListAsync();
+            var composers = await _context.Composers
+                .OrderBy(c => c.LastName)
+                .ThenBy(c => c.Name)
+                .ToListAsync();
 
             var composerDtos = composers.Select(c => 
                 new ComposerDto
@@ -64,7 +67,7 @@ namespace CMRWebApi.Controllers
                     Name = p.Name,
                     Tonality = p.Tonality.Name,
                     Catalog = p.Catalog
-                })
+                }).OrderBy(p => p.Name)
             };
 
             return Ok(composerDto);

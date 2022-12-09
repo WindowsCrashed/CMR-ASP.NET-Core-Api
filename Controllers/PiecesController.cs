@@ -23,6 +23,8 @@ namespace CMRWebApi.Controllers
             var pieces = await _context.Pieces
                 .Include(p => p.Tonality)
                 .Include(p => p.Composer)
+                .OrderBy(p => p.Composer.LastName)
+                .ThenBy(p => p.Name)
                 .ToListAsync();
 
             var pieceDtos = pieces.Select(p => 
