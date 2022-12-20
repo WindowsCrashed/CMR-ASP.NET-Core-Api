@@ -18,12 +18,42 @@ namespace CMRWebApi.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("search")]
         public async Task<IActionResult> GetComposers()
         {
-            var composers = await _context.Composers.ToListAsync();
+            var composers = await _context.Composers
+                .OrderBy(c => c.LastName)
+                .ThenBy(c => c.Name)
+                .ToListAsync();
 
             var composerDtos = composers.Select(c => 
+                new ComposerDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    LastName = c.LastName,
+                    Nationality = c.Nationality,
+                    Period = c.Period
+                }
+            );
+
+            return Ok(composerDtos);
+        }
+
+        [HttpGet("search/{filter}")]
+        public async Task<IActionResult> GetComposersByFilter(string filter)
+        {
+            var composers = await _context.Composers
+                .OrderBy(c => c.LastName)
+                .ThenBy(c => c.Name)
+                .Where(c =>
+                    EF.Functions.Like(c.Name, $"%{filter}%") ||
+                    EF.Functions.Like(c.LastName, $"%{filter}%") ||
+                    EF.Functions.Like(c.Nationality, $"%{filter}%") ||
+                    EF.Functions.Like(c.Period, $"%{filter}%"))
+                .ToListAsync();
+
+            var composerDtos = composers.Select(c =>
                 new ComposerDto
                 {
                     Id = c.Id,
@@ -64,7 +94,7 @@ namespace CMRWebApi.Controllers
                     Name = p.Name,
                     Tonality = p.Tonality.Name,
                     Catalog = p.Catalog
-                })
+                }).OrderBy(p => p.Name)
             };
 
             return Ok(composerDto);

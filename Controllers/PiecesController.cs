@@ -17,15 +17,46 @@ namespace CMRWebApi.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("search")]
         public async Task<IActionResult> GetPieces()
         {
             var pieces = await _context.Pieces
                 .Include(p => p.Tonality)
                 .Include(p => p.Composer)
+                .OrderBy(p => p.Composer.LastName)
+                .ThenBy(p => p.Name)
                 .ToListAsync();
 
-            var pieceDtos = pieces.Select(p => 
+            var pieceDtos = pieces.Select(p =>
+                new PieceDto()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Catalog = p.Catalog,
+                    Tonality = p.Tonality.Name,
+                    ComposerId = p.ComposerId,
+                    Composer = p.Composer.LastName
+                });
+
+            return Ok(pieceDtos);
+        }
+
+        [HttpGet("search/{filter}")]
+        public async Task<IActionResult> GetPiecesByFilter(string filter)
+        {
+            var pieces = await _context.Pieces
+                .Include(p => p.Tonality)
+                .Include(p => p.Composer)
+                .OrderBy(p => p.Composer.LastName)
+                .ThenBy(p => p.Name)
+                .Where(p => 
+                    EF.Functions.Like(p.Name, $"%{filter}%") ||
+                    EF.Functions.Like(p.Composer.LastName, $"%{filter}%") ||
+                    EF.Functions.Like(p.Catalog, $"%{filter}%") ||
+                    EF.Functions.Like(p.Tonality.Name, $"%{filter}%"))
+                .ToListAsync();
+
+            var pieceDtos = pieces.Select(p =>
                 new PieceDto()
                 {
                     Id = p.Id,
